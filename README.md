@@ -1,6 +1,8 @@
 # Audio-Player
-    Early Build v1
-    This is a basic application that validates a file for sound file extensions.
 
-## Feature update bucket list:
-    Audio player that plays the succsessfully validated files
+## v1
+An audio player made with love with python!
+
+## Files
+Source code is in audioPlayer.py
+Executable file resides in the /dist/ directory
