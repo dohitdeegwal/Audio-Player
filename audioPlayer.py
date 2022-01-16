@@ -7,83 +7,99 @@ import os.path
 from pygame import mixer
 
 # global variables
-filepath = ""
 default_bg = ""
+play_queue = []
+playing_basename = ""
 valid_extensions = (".mp3", ".wav")
-
-# set the initial button and label states
-def initialize():
-    filename_lbl.config(text="Choosing file...", bg=default_bg)
-    validity_lbl.config(text="", bg=default_bg)
-    act_btn.config(state="disabled", command=play)
-    stop_btn.config(state="disabled")
+mixer.init()
 
 # gets the filepath and checks for valid extension
 def chooseFile():
-    initialize()
-    global filepath  # needed to modify global copy of filepath
-    filepath = askopenfilename()
-    filename_lbl.config(text=os.path.basename(filepath))
+    filename_lbl.config(text="Choosing file...", bg=default_bg)
+    validity_lbl.config(text="", bg=default_bg)
 
+    global play_queue  # needed to modify global copies of variables
+    filepath = askopenfilename()
+    basename = os.path.basename(filepath)   
+    extension = os.path.splitext(basename)[1]
+    
     if(not os.path.exists(filepath)):
-        filename_lbl.config(text="Invalid Path!" + filepath, bg="red")
+        filename_lbl.config(text="Invalid Path!", bg="red")
     else:
-        extension = os.path.splitext(filepath)[1]
         if extension not in valid_extensions:
-            filename_lbl.config(bg="red")
-            lbl_text = "Unsupported File extension: " + extension + \
-                "\nChoose from: " + ", ".join(valid_extensions)
-            validity_lbl.config(text=lbl_text)
+            filename_lbl.config(text=basename, bg="red")          
+            validity_lbl.config(text= "Unsupported File extension: " + extension + "\nChoose from: " + ", ".join(valid_extensions))
         else:
-            filename_lbl.config(bg="green")
-            act_btn.config(state="normal")
-            mixer.init()
-            mixer.music.load(filepath)
+            play_queue.append(filepath)
+            filename_lbl.config(text="In queue: " + os.path.basename(play_queue[0]))
+            play_btn.config(state="normal")
 
 
 # audio control functions
 
 def resume():
     mixer.music.unpause()
-    act_btn.config(text="Pause", command=pause)
+    playing_lbl.config(text="Now Playing: " + playing_basename)
+    pause_btn.config(text="Pause", command=pause)
 
 
 def pause():
     mixer.music.pause()
-    act_btn.config(text="Resume", command=resume)
+    playing_lbl.config(text="Paused: " + playing_basename)
+    pause_btn.config(text="Resume", command=resume)
 
 
 def play():
+    global playing_basename, play_queue
+    mixer.music.load(play_queue[0])
     mixer.music.play()
-    act_btn.config(text="Pause", command=pause)
+    playing_basename = os.path.basename(play_queue[0])
+
+    pause_btn.config(text="Pause", command=pause, state="normal")
     stop_btn.config(state="normal")
+
+    playing_lbl.config(text="Now Playing: " + playing_basename, bg="green")
+
+    try:
+        filename_lbl.config(text= "In queue: " + os.path.basename(play_queue[1]))
+    except IndexError:
+        filename_lbl.config(text= "Queue empty")
+        play_btn.config(state="disabled")
+
+    del(play_queue[0])
 
 
 def stop():
     mixer.music.stop()
     stop_btn.config(state="disabled")
-    act_btn.config(text="Play", command=play)
+    pause_btn.config(text="Pause", state="disabled")
+    play_btn.config(text="Play queued", command=play)
+    playing_lbl.config(text="", bg=default_bg)
 
 # window declaration
 window = Tk()
 window.title("Audio Player")
 
 # widget declaration
-title = Label(window, text="MP3 Player", bd=9, relief=GROOVE, font=(
-    "times new roman", 50, "bold"), bg="white", fg="Gray")
+title = Label(window, text="MP3 Player", bd=9, relief=GROOVE, font=("times new roman", 50, "bold"), bg="white", fg="Gray")
 choose_btn = Button(master=window, text="Choose File", command=chooseFile)
+playing_lbl = Label(window)
 filename_lbl = Label(window)
 validity_lbl = Label(window)
-act_btn = Button(window, text="Play", state="disabled", command=play, width=10)
-stop_btn = Button(window, text="Stop", state="disabled",command=stop, width=10)
+play_btn = Button(window, text="Play queued", state="disabled", command=play, width=10)
+stop_btn = Button(window, text="Stop", state="disabled", command=stop, width=10)
+pause_btn = Button(window, text="Pause", state="disabled", command=pause, width=10)
 
 # widget packing
-title.grid(row=0, columnspan=5)
-choose_btn.grid(row=1, column=2)
-filename_lbl.grid(row=2, column=0, columnspan=5)
-validity_lbl.grid(row=3, column=0, columnspan=5)
-act_btn.grid(row=4, column=0, rowspan=2, columnspan=2)
-stop_btn.grid(row=4, column=3, rowspan=2, columnspan=2)
+columnspan = 6
+title.grid(row=0, columnspan=columnspan)
+choose_btn.grid(row=1, column=2, columnspan=2)
+playing_lbl.grid(row=2, column=0, columnspan=columnspan)
+filename_lbl.grid(row=3, column=0, columnspan=columnspan)
+validity_lbl.grid(row=4, column=0, columnspan=columnspan)
+play_btn.grid(row=5, column=0, rowspan=2, columnspan=2)
+pause_btn.grid(row=5, column=2, rowspan=2, columnspan=2)
+stop_btn.grid(row=5, column=4, rowspan=2, columnspan=2)
 
 # get default widget bg color
 default_bg = validity_lbl.cget('bg')
