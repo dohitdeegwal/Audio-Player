@@ -1,6 +1,7 @@
 ### Dohit Deegwal ###
 #### 17-01-2022 ####
 
+# dependencies
 from tkinter import *
 from tkinter.filedialog import askopenfilename
 import os.path
@@ -13,7 +14,7 @@ playing_basename = ""
 valid_extensions = (".mp3", ".wav")
 mixer.init()
 
-# gets the filepath and checks for valid extension
+# gets the new file, validates it and updates the playlist
 def chooseFile():
     filename_lbl.config(text="Choosing file...", bg=default_bg)
     validity_lbl.config(text="", bg=default_bg)
@@ -37,18 +38,6 @@ def chooseFile():
 
 # audio control functions
 
-def resume():
-    mixer.music.unpause()
-    playing_lbl.config(text="Now Playing: " + playing_basename)
-    pause_btn.config(text="Pause", command=pause)
-
-
-def pause():
-    mixer.music.pause()
-    playing_lbl.config(text="Paused: " + playing_basename)
-    pause_btn.config(text="Resume", command=resume)
-
-
 def play():
     global playing_basename, play_queue
     mixer.music.load(play_queue[0])
@@ -68,6 +57,15 @@ def play():
 
     del(play_queue[0])
 
+def pause():
+    mixer.music.pause()
+    playing_lbl.config(text="Paused: " + playing_basename)
+    pause_btn.config(text="Resume", command=resume)
+
+def resume():
+    mixer.music.unpause()
+    playing_lbl.config(text="Now Playing: " + playing_basename)
+    pause_btn.config(text="Pause", command=pause)
 
 def stop():
     mixer.music.stop()
@@ -75,6 +73,7 @@ def stop():
     pause_btn.config(text="Pause", state="disabled")
     play_btn.config(text="Play queued", command=play)
     playing_lbl.config(text="", bg=default_bg)
+
 
 # window declaration
 window = Tk()
@@ -91,15 +90,16 @@ stop_btn = Button(window, text="Stop", state="disabled", command=stop, width=10)
 pause_btn = Button(window, text="Pause", state="disabled", command=pause, width=10)
 
 # widget packing
-columnspan = 6
-title.grid(row=0, columnspan=columnspan)
-choose_btn.grid(row=1, column=2, columnspan=2)
-playing_lbl.grid(row=2, column=0, columnspan=columnspan)
-filename_lbl.grid(row=3, column=0, columnspan=columnspan)
-validity_lbl.grid(row=4, column=0, columnspan=columnspan)
-play_btn.grid(row=5, column=0, rowspan=2, columnspan=2)
-pause_btn.grid(row=5, column=2, rowspan=2, columnspan=2)
-stop_btn.grid(row=5, column=4, rowspan=2, columnspan=2)
+lbl_colspan = 6
+btn_colspan = 2
+title.grid(row=0, columnspan=lbl_colspan)
+choose_btn.grid(row=1, column=2, columnspan=btn_colspan)
+playing_lbl.grid(row=2, column=0, columnspan=lbl_colspan)
+filename_lbl.grid(row=3, column=0, columnspan=lbl_colspan)
+validity_lbl.grid(row=4, column=0, columnspan=lbl_colspan)
+play_btn.grid(row=5, column=0, rowspan=2, columnspan=btn_colspan)
+pause_btn.grid(row=5, column=2, rowspan=2, columnspan=btn_colspan)
+stop_btn.grid(row=5, column=4, rowspan=2, columnspan=btn_colspan)
 
 # get default widget bg color
 default_bg = validity_lbl.cget('bg')
