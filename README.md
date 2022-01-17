@@ -2,7 +2,7 @@
 An audio player made with love with python!  
 Release date: 17-01-2022
 
-## v1.1
+## v1.1.1
 ### Bug Fixes
     Choosing file while music is playing
 ### New Features
