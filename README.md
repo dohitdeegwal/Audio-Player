@@ -2,15 +2,14 @@
 An audio player made with love with python!  
 Release date: 17-01-2022
 
-## v1.1
-### Bug Fixes
-    Choosing file while music is playing
-### New Features
-    Play queue: add your favourite songs to the queue while listening to the current one
+## v1.1.2
+    Minor bug fixes and visual improvements
 
 ## Files
 ### Source code
     audioPlayer.py
+### Icon
+    icon.ico
 ### Executable
     dist/audioPlayer.exe
 
