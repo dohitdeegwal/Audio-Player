@@ -1,18 +1,18 @@
 # Music Player
 An audio player made with love with python!  
-Release date: 17-01-2022
+Release date: 24-01-2022
 
-## v1.1.2
-    Minor bug fixes and visual improvements
+## v1.2.0: What's New?
+    Added filetype constraint to file selection dialog and removed the extension validator code
 
 ## Files
 ### Source code
-    audioPlayer.py
+    - audioPlayer.py  
+    - frontend.py
 ### Icon
     icon.ico
 ### Executable
-    dist/audioPlayer.exe
-
+    audioPlayer.exe
 ## Dependencies
     - tkinter
     - tkinter.filedialog.askopenfilename
